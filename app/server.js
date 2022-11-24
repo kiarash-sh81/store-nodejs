@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
+const { AllRoutes } = require('./router/router');
 module.exports = class Application{
     #port;
     #DB_URI;
@@ -32,13 +33,7 @@ module.exports = class Application{
         });
     }
     createRoutes(){
-        this.#app.get("/" , (req , res , next)=>{
-            return res.status(200).json({
-                statusCode:200,
-                success:true,
-                message:"this is the store application"
-            });
-        })
+        this.#app.use(AllRoutes);
     }
     errorHanddler(){
         this.#app.use((req , res , next)=>{
