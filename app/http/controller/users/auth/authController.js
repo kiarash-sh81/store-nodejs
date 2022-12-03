@@ -1,7 +1,7 @@
 const { authSchema, checkOtp } = require("../../../validator/user/auth.schema")
 const createError = require('http-errors');
 const controller = require("../../controller");
-const { randomNumberGenerator, SignAccessToken } = require("../../../../utils/function");
+const { randomNumberGenerator, SignAccessToken, verifyRefreshToken, SignRefreshToken } = require("../../../../utils/function");
 const  {UserMoldle}   = require("../../../../models/users");
 const { USER_ROLE, EXPIRES_IN } = require("../../../../utils/constans");
 
@@ -35,9 +35,28 @@ class Authentication extends controller{
             const now = Date.now();
             if(+user.otp.expiresIn < now) throw createError.Unauthorized("code has been expired");
             const AccessToken =await SignAccessToken(user._id);
+            const refreshToken = await SignRefreshToken(user._id);
             return res.json({
                 data:{
-                    AccessToken
+                    AccessToken,
+                    refreshToken
+                }
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+    async refreshToken(req, res, next){
+        try {
+            const {refreshToken} = req.body;
+            const phone = await verifyRefreshToken(refreshToken);
+            const user = await UserMoldle.findOne({phone});
+            const accesstoken = await SignAccessToken(user._id);
+            const newRefreshToken = await SignRefreshToken(user._id);
+            return res.json({
+                data:{
+                    accesstoken,
+                    refreshToken
                 }
             })
         } catch (error) {

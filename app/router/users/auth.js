@@ -61,6 +61,24 @@ router.post("/get-otp" , Authentication.getOtp);
  *                  description: Internal server error
  */
 router.post("/check-otp" , Authentication.checkingOtp);
+/**
+ * @swagger
+ *  /user/refreshToken:
+ *      post:
+ *          tags: [User-Authentication]
+ *          summery: sending token and get refresh token
+ *          description: refresh token gen
+ *          parameters:
+ *          -   name: refreshToken
+ *              description: refresh token
+ *              in: body
+ *              required: true
+ *              type: string
+ *          responses:
+ *              200:
+ *                  description: success
+ */
+router.post("/refreshToken" , Authentication.refreshToken);
 
 module.exports ={
     userAuthentication: router

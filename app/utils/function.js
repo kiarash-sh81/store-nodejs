@@ -1,5 +1,5 @@
 const { UserMoldle } = require("../models/users");
-const { SECRET_KEY, ACCESS_SECRET_KEY } = require("./constans");
+const { SECRET_KEY, ACCESS_SECRET_KEY, REFRESH_SECRET_KEY } = require("./constans");
 const JWT = require('jsonwebtoken');
 const createError = require('http-errors');
 
@@ -23,8 +23,40 @@ function SignAccessToken(userId){
     })
 }
 
+function SignRefreshToken(userId){
+    return new Promise(async(resolve , reject)=>{
+        const user =await UserMoldle.findById(userId);
+        const payload = {phone:user.phone};
+        const secretKey  = REFRESH_SECRET_KEY;
+        const options = {
+            expiresIn: "365d"
+        }
+        JWT.sign(payload , secretKey , options , (err , token)=>{
+            if(err) reject(createError.InternalServerError("internal server error"));
+            resolve(token)
+        })
+
+    })
+}
+
+function verifyRefreshToken(token){
+
+        return new Promise(async(resolve , reject)=>{
+            JWT.verify(token ,REFRESH_SECRET_KEY ,async (err , payload)=>{
+              if(err) reject(createError.Unauthorized("please login to your account"));
+              const {phone} = payload || {};
+              const user = await UserMoldle.findOne({phone} , {password: 0 , otp:0 , bills: 0});
+              if(!user) reject(createError.NotFound("user not founded"));
+              resolve(phone)
+            })    
+
+        })
+}
+
 
 module.exports ={
     randomNumberGenerator,
-    SignAccessToken
+    SignAccessToken,
+    SignRefreshToken,
+    verifyRefreshToken
 }
