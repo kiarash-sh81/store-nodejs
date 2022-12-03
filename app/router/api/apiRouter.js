@@ -1,4 +1,5 @@
 const  indexPage  = require('../../http/controller/api/indexPage');
+const { verifyAccessToken } = require('../../http/middlewares/verifyAccessToken');
 
 const router = require('express').Router();
 /**
@@ -14,6 +15,10 @@ const router = require('express').Router();
  *      summery: index of routes
  *      tags: [IndaxPage]
  *      description: get all need data for index page
+ *      parameters:
+ *          -   in: header
+ *              name: accesstoken
+ *              example: Beares YourToken...
  *      responses:
  *          200:
  *              description: success
@@ -21,7 +26,7 @@ const router = require('express').Router();
  *              description: not founded
  */
 
-router.get("/" , indexPage.indexPage);
+router.get("/" ,verifyAccessToken ,indexPage.indexPage);
 
 module.exports ={
     homeRoutes: router

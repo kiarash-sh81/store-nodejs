@@ -9,7 +9,7 @@ const router = require('express').Router();
  */
 /**
  * @swagger
- *  /user/login:
+ *  /user/get-otp:
  *      post:
  *          tags: [User-Authentication]
  *          summery: login user in user panel with phone number
@@ -31,7 +31,36 @@ const router = require('express').Router();
  *                  description: Internal server error
  */
 
-router.post("/login" , Authentication.login);
+router.post("/get-otp" , Authentication.getOtp);
+/**
+ * @swagger
+ *  /user/check-otp:
+ *      post:
+ *          tags: [User-Authentication]
+ *          summery: sending otp code and check the code
+ *          description: otp code sending
+ *          parameters:
+ *          -   name: phone
+ *              description: fa-IRI phone number
+ *              in: formData
+ *              required: true
+ *              type: string
+ *          -   name: code
+ *              description: otp code
+ *              in: formData
+ *              required: true
+ *              type: string
+ *          responses:
+ *              201:
+ *                  description: Success
+ *              400:
+ *                  description: Bad request
+ *              401:
+ *                  description: Unauthorization
+ *              500:
+ *                  description: Internal server error
+ */
+router.post("/check-otp" , Authentication.checkingOtp);
 
 module.exports ={
     userAuthentication: router

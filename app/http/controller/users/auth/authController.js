@@ -1,12 +1,12 @@
-const { authSchema } = require("../../../validator/user/auth.schema")
+const { authSchema, checkOtp } = require("../../../validator/user/auth.schema")
 const createError = require('http-errors');
 const controller = require("../../controller");
-const { randomNumberGenerator } = require("../../../../utils/function");
+const { randomNumberGenerator, SignAccessToken } = require("../../../../utils/function");
 const  {UserMoldle}   = require("../../../../models/users");
 const { USER_ROLE, EXPIRES_IN } = require("../../../../utils/constans");
 
 class Authentication extends controller{
-    async login(req , res , next){
+    async getOtp(req , res , next){
         try {
             await authSchema.validateAsync(req.body);
             const {phone} = req.body;
@@ -23,6 +23,25 @@ class Authentication extends controller{
             });
         } catch (error) {
             next(createError.BadRequest(error.message));
+        }
+    }
+    async checkingOtp(req ,res, next){
+        try {
+            await checkOtp.validateAsync(req.body);
+            const {phone , code} =req.body;
+            const user = await UserMoldle.findOne({phone});
+            if(!user) throw createError.NotFound("user not founded");
+            if(user.otp.code != code) throw createError.Unauthorized("inccorect code");
+            const now = Date.now();
+            if(+user.otp.expiresIn < now) throw createError.Unauthorized("code has been expired");
+            const AccessToken =await SignAccessToken(user._id);
+            return res.json({
+                data:{
+                    AccessToken
+                }
+            })
+        } catch (error) {
+            next(error)
         }
     }
     async saveUser(phone , code){
@@ -44,11 +63,11 @@ class Authentication extends controller{
         Object.keys(objectData).forEach(keys=>{
             if(["" , " " , NaN , undefined , null , 0 , false].includes(objectData[keys])) delete objectData[keys];
         });
-        console.log(objectData);
-        const updateResualt = await UserMoldle.updateOne({phone},{$set:objectData});
-        console.log(updateResualt.modifiedCount);
+        let otp =objectData;
+        const updateResualt = await UserMoldle.updateOne({phone},{$set:{otp}});
         return !!updateResualt.modifiedCount
     }
+
 }
 
 module.exports ={
