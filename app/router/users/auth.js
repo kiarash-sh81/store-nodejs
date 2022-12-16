@@ -71,7 +71,7 @@ router.post("/check-otp" , Authentication.checkingOtp);
  *          parameters:
  *          -   name: refreshToken
  *              description: refresh token
- *              in: body
+ *              in: formData
  *              required: true
  *              type: string
  *          responses:

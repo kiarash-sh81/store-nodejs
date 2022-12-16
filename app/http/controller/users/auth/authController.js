@@ -56,7 +56,7 @@ class Authentication extends controller{
             return res.json({
                 data:{
                     accesstoken,
-                    refreshToken
+                    newRefreshToken
                 }
             })
         } catch (error) {
@@ -66,7 +66,7 @@ class Authentication extends controller{
     async saveUser(phone , code){
         let otp = {
             code,
-            expiresIn: EXPIRES_IN
+            expiresIn: (new Date().getTime() + 120000)
         }
         const resualt = await this.checkExistUser(phone);
         if(resualt){
