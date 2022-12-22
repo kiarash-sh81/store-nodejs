@@ -75,7 +75,23 @@ router.get("/all", categoryController.getAllCategory);
  *              201:
  *                  description: success
  */
-router.delete("/delete/:id" , categoryController.removeCategory)
+router.delete("/delete/:id" , categoryController.removeCategory);
+/**
+ * @swagger
+ *  /admin/category/{id}:
+ *      get:
+ *          tags: [Admin-Panel]
+ *          summery: get category by id
+ *          parameters:
+ *              -   in: path
+ *                  name: id
+ *                  type: string
+ *                  required: true
+ *          responses:
+ *              200:
+ *                  description: success
+ */
+router.get("/:id" , categoryController.getCategoryById);
 
 module.exports ={
     categoryRoutes: router

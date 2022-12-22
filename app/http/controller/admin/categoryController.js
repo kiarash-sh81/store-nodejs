@@ -2,6 +2,7 @@ const{ CategoryMoldle }= require('../../../models/categories');
 const createError = require('http-errors');
 const { addcategorySchema } = require('../../validator/admin/category.schema');
 const controller = require('../controller');
+const mongoose = require('mongoose');
 
 class categoryController extends controller{
     async addCategory(req, res, next){
@@ -32,7 +33,10 @@ class categoryController extends controller{
         try {
             const {id} = req.params
             const category = await this.checkExistCategiryById(id);
-            const deleted = await CategoryMoldle.deleteOne({_id: category._id});
+            const deleted = await CategoryMoldle.deleteMany({$or : [
+                {_id:category._id},
+                {parent:category._id}
+            ]});
             if(deleted.deletedCount==0) throw createError.InternalServerError("internal server error");
             return res.status(201).json({
                 statusCode: 201,
@@ -51,16 +55,37 @@ class categoryController extends controller{
     }
     async getAllCategory(req, res, next){
         try {
+            // const category = await CategoryMoldle.aggregate([
+            //     {
+            //         $lookup:{
+            //             from:"categories",
+            //             localField:"_id",
+            //             foreignField:"parent",
+            //             as:"children"
+            //         }
+            //     }
+            // ]);
             const category = await CategoryMoldle.aggregate([
                 {
-                    $lookup:{
+                    $graphLookup:{
                         from:"categories",
-                        localField:"_id",
-                        foreignField:"parent",
+                        startWith: "$_id",
+                        connectFromField:"_id",
+                        connectToField:"parent",
+                        maxDepth:5,
+                        depthField: "depth",
                         as:"children"
+                    }
+                },
+                {
+                    $project:{
+                        __v : 0,
+                        "children.__v" : 0,
+                        "children.parent" : 0
                     }
                 }
             ]);
+            
             return res.status(200).json({
                 statusCode:200,
                 data:{
@@ -73,7 +98,33 @@ class categoryController extends controller{
     }
     async getCategoryById(req, res, next){
         try {
-            
+            const {id : _id} = req.params;
+            const category = await CategoryMoldle.aggregate ([
+                {
+                    $match:{_id : mongoose.Types.ObjectId(_id)},
+                },
+                {
+                    $lookup:{
+                        from:"categories",
+                        localField:"_id",
+                        foreignField:"parent",
+                        as:"children"
+                    }
+                },
+                {
+                    $project:{
+                        __v:0,
+                        "children.__v":0,
+                        "children.parent":0
+                    }
+                }
+            ]);
+            return res.status(200).json({
+                statusCode:200,
+                data:{
+                    category
+                }
+            })
         } catch (error) {
             next(error)
         }
