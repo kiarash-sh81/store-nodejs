@@ -24,7 +24,17 @@ class categoryController extends controller{
     }
     async editeCategory(req, res, next){
         try {
-            
+            const {id} = req.params;
+            const check =await this.checkExistCategiryById(id);
+            const {title} = req.body;
+            const resualt = await CategoryMoldle.updateOne({_id: id} , {$set:{title}});
+            if(resualt.modifiedCount == 0) createError.InternalServerError("category not updated");
+            return res.status(200).json({
+                statusCode:200,
+                data:{
+                    message: "category updated successfully"
+                }
+            });
         } catch (error) {
             next(error)
         }
@@ -65,31 +75,47 @@ class categoryController extends controller{
             //         }
             //     }
             // ]);
-            const category = await CategoryMoldle.aggregate([
-                {
-                    $graphLookup:{
-                        from:"categories",
-                        startWith: "$_id",
-                        connectFromField:"_id",
-                        connectToField:"parent",
-                        maxDepth:5,
-                        depthField: "depth",
-                        as:"children"
-                    }
-                },
-                {
-                    $project:{
-                        __v : 0,
-                        "children.__v" : 0,
-                        "children.parent" : 0
-                    }
-                }
-            ]);
-            
+            // const category = await CategoryMoldle.aggregate([
+            //     {
+            //         $graphLookup:{
+            //             from:"categories",
+            //             startWith: "$_id",
+            //             connectFromField:"_id",
+            //             connectToField:"parent",
+            //             maxDepth:5,
+            //             depthField: "depth",
+            //             as:"children"
+            //         }
+            //     },
+            //     {
+            //         $project:{
+            //             __v : 0,
+            //             "children.__v" : 0,
+            //             "children.parent" : 0
+            //         }
+            //     }
+            // ]);
+            const category = await CategoryMoldle.find({parent: undefined} , {__v: 0});
             return res.status(200).json({
                 statusCode:200,
                 data:{
                     category
+                }
+            })
+        } catch (error) {
+            console.log(error);
+            next(error)
+        }
+    }
+    async getAllCategoryWithoutPopulate(req, res, next){
+        try {
+            const categories = await CategoryMoldle.aggregate([
+                {$match: {}}
+            ]);
+            return res.status(200).json({
+                statusCode: 200,
+                data:{
+                    categories
                 }
             })
         } catch (error) {
