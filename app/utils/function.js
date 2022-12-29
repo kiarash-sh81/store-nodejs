@@ -1,6 +1,8 @@
 const { UserMoldle } = require("../models/users");
 const { SECRET_KEY, ACCESS_SECRET_KEY, REFRESH_SECRET_KEY } = require("./constans");
 const JWT = require('jsonwebtoken');
+const path = require('path');
+const fs = require('fs');
 const createError = require('http-errors');
 const redisClient = require("./redisInit");
 
@@ -58,10 +60,17 @@ function verifyRefreshToken(token){
         })
 }
 
+function deleteFileInPublic(fileAdress){
+    const filePath = path.join(__dirname , "..",".." ,"public" ,fileAdress);
+    console.log(filePath);
+    fs.unlinkSync(filePath);
+}
+
 
 module.exports ={
     randomNumberGenerator,
     SignAccessToken,
     SignRefreshToken,
-    verifyRefreshToken
+    verifyRefreshToken,
+    deleteFileInPublic
 }
