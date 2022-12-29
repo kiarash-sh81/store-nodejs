@@ -109,8 +109,31 @@ class blogController extends controller{
     }
     async updateBlogById(req, res, next){
         try {
-            
+            const {id} = req.params;
+            await this.findBlog(id);
+            if(req?.body?.fileUploadPath && req?.body?.fileName){
+                req.body.image = path.join(req.body.fileUploadPath, req.body.fileName);
+            }
+            let data = req.body;
+            let nullishData = ["" , " " , "0" , 0 , undefined , null];
+            let blackList = ["comments","like","dislike","bookmark"];
+            Object.keys(data).forEach(key => {
+                if(blackList.includes(data[key])) delete data[key];
+                if(typeof data[key] == "string") data[key] = data[key].trim();
+                if(Array.isArray(data[key]) && Array.length > 0) data[key] = data[key].map(item => item.trim());
+                if(nullishData.includes(data[key])) delete data[key];
+            });
+            const blog = await BlogMoldle.updateOne({_id: id} , {$set: data});
+            if(blog.modifiedCount == 0) throw createError.InternalServerError("cant update blog please try again");
+            return res.status(200).json({
+                statusCode:200,
+                data:{
+                    message: "blog update successfully"
+                }
+            });
+
         } catch (error) {
+            deleteFileInPublic(req.body.image);
             next(error)
         }
     }
