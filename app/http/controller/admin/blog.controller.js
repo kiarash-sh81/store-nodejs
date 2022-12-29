@@ -1,5 +1,6 @@
 const { createBlogSchema } = require('../../validator/admin/blog');
 const controller = require('../controller');
+const createError = require('http-errors');
 const path = require('path');
 const { BlogMoldle } = require('../../../models/blogs');
 const { deleteFileInPublic } = require('../../../utils/function');
@@ -23,9 +24,21 @@ class blogController extends controller{
             next(error);
         }
     }
+    async findBlog(id){
+        const blog = await BlogMoldle.findOne({_id: id}).populate([{path:"category" , select:["_id" , "title"]} , {path:"author" , select: ["phone" , "_id"]}]);
+        if(!blog) throw createError.NotFound("blog not founded");
+        return blog;
+    }
     async getOneBlogById(req, res, next){
         try {
-            
+            const {id} = req.params;
+            const blog = await this.findBlog(id);
+            return res.status(200).json({
+                statusCode:200,
+                data:{
+                    blog
+                }
+            })
         } catch (error) {
             next(error)
         }
@@ -80,7 +93,16 @@ class blogController extends controller{
     }
     async deleteBlogById(req, res, next){
         try {
-            
+            const {id} = req.params;
+            await this.findBlog(id);
+            const deletingBlog = await BlogMoldle.deleteOne({_id: id});
+            if(deletingBlog.deletedCount == 0) throw createError.InternalServerError("selecter blog didnot deleted please try again");
+            return res.status(200).json({
+                statusCode:200,
+                data:{
+                    message:"blog deleted successfully"
+                }
+            })
         } catch (error) {
             next(error)
         }

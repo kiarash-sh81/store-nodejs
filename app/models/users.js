@@ -15,6 +15,11 @@ const schema = new Schema({
     discount: {type: Number , default: 0},
     birthDay: {type: String},
     Roles: {type: [] , default: ["USER"]}
+},{timeseries: true,toJSON:{virtuals: true}});
+schema.virtual("user" , {
+    ref: "user",
+    localField: "_id",
+    foreignField: "author"
 });
 
 module.exports ={

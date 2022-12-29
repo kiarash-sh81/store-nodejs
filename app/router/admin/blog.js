@@ -66,6 +66,46 @@ router.get("/" ,verifyAccessToken, blogController.getListOfBlog);
  *                  description: success
  */
 router.post("/add" ,verifyAccessToken, uploadfile.single("image"),stringToArray("tags"), blogController.createBlog)
+/**
+ * @swagger
+ *  /admin/blogs/{id}:
+ *      get:
+ *          tags: [Blog(Admin-Panel)]
+ *          summary: get blog by id
+ *          parameters:
+ *              -   in: path
+ *                  name: id
+ *                  required: true
+ *                  type: string
+ *              -   in: header
+ *                  name: accesstoken
+ *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjA5MDUwMTA3NDAxIiwiaWF0IjoxNjcyMzIyMzI2LCJleHAiOjE3MDM4NTgzMjZ9.ZEeG2aHdVCgsPqQ_RJA3gE3xFX1HcJC12xA9xb_KC8c
+ *                  type: string
+ *          responses:
+ *              200:
+ *                  description: success
+ */
+router.get("/:id" , verifyAccessToken , blogController.getOneBlogById)
+/**
+ * @swagger
+ *  /admin/blogs/{id}:
+ *      delete:
+ *          tags: [Blog(Admin-Panel)]
+ *          summary: delete blog by id
+ *          parameters:
+ *              -   in: path
+ *                  name: id
+ *                  required: true
+ *                  type: string
+ *              -   in: header
+ *                  name: accesstoken
+ *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjA5MDUwMTA3NDAxIiwiaWF0IjoxNjcyMzIyMzI2LCJleHAiOjE3MDM4NTgzMjZ9.ZEeG2aHdVCgsPqQ_RJA3gE3xFX1HcJC12xA9xb_KC8c
+ *                  type: string
+ *          responses:
+ *              200:
+ *                  description: success
+ */
+router.delete("/:id" , verifyAccessToken , blogController.deleteBlogById);
 module.exports ={
     blogAdminController : router
 }
