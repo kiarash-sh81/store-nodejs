@@ -1,22 +1,39 @@
 const {categoryController} = require('../../http/controller/admin/categoryController');
 
 const router = require('express').Router();
-
+/**
+ * @swagger
+ *  components:
+ *      schemas:
+ *          AddCategory:
+ *              type: object
+ *              required: 
+ *                  -   title
+ *              properties:
+ *                  title:
+ *                      type: string
+ *                      description: the title of category
+ *                  parent:
+ *                      type: string
+ *                      description: if the category has parent
+ *              
+ */
+/**
 /**
  * @swagger
  *  /admin/category/add:
  *      post:
  *          tags: [Category(AdminPanel)]
  *          summery: create new category
- *          parameters:
- *              -   in: formData
- *                  type: string
- *                  required: true
- *                  name: title
- *              -   in: formData
- *                  type: string
- *                  required: false
- *                  name: parent
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                          $ref: '#/components/schemas/AddCategory'
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/AddCategory'
  *          responses:
  *              201:
  *                  description: success
