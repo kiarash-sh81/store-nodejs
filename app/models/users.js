@@ -14,7 +14,8 @@ const schema = new Schema({
     bills: {type: [] , default: []},
     discount: {type: Number , default: 0},
     birthDay: {type: String},
-    Roles: {type: [] , default: ["USER"]}
+    Roles: {type: [] , default: ["USER"]},
+    courses:{type: [mongoose.Types.ObjectId] , ref: "course" , default: []}
 },{timeseries: true,toJSON:{virtuals: true}});
 schema.virtual("user" , {
     ref: "user",
