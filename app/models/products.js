@@ -18,7 +18,7 @@ const schema = new Schema({
     type : {type: String , requierd: true},
     format : {type: String },
     suplier : {type: mongoose.Types.ObjectId , requierd: true},
-    size : {type: Object , default:{
+    feature : {type: Object , default:{
         length:"",
         height:"",
         wedth:"",

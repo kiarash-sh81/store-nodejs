@@ -67,12 +67,19 @@ function deleteFileInPublic(fileAdress){
         fs.unlinkSync(filePath);
     }
 }
-
+function returnListOfImagesFromRequest(files , fileUploadPath){
+    if(files?.length > 0){
+        return (files.map(file => path.join(fileUploadPath , file.filename)));
+    }else{
+        return []
+    }
+}
 
 module.exports ={
     randomNumberGenerator,
     SignAccessToken,
     SignRefreshToken,
     verifyRefreshToken,
-    deleteFileInPublic
+    deleteFileInPublic,
+    returnListOfImagesFromRequest
 }
