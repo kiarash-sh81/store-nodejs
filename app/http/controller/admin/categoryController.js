@@ -3,6 +3,7 @@ const createError = require('http-errors');
 const { addcategorySchema } = require('../../validator/admin/category.schema');
 const controller = require('../controller');
 const mongoose = require('mongoose');
+const {StatusCodes} = require('http-status-codes');
 
 class categoryController extends controller{
     async addCategory(req, res, next){
@@ -11,9 +12,9 @@ class categoryController extends controller{
             const {title , parent} = req.body;
             const category =await CategoryMoldle.create({title , parent});
             if(!category) throw createError.InternalServerError("internal server error");
-            return res.status(201).json({
+            return res.status(StatusCodes.CREATED).json({
                 data:{
-                    statusCode:201,
+                    statusCode:StatusCodes.CREATED,
                     success:true,
                     message:"category created successfully"
                 }
@@ -29,8 +30,8 @@ class categoryController extends controller{
             const {title} = req.body;
             const resualt = await CategoryMoldle.updateOne({_id: id} , {$set:{title}});
             if(resualt.modifiedCount == 0) createError.InternalServerError("category not updated");
-            return res.status(200).json({
-                statusCode:200,
+            return res.status(StatusCodes.OK).json({
+                statusCode:StatusCodes.OK,
                 data:{
                     message: "category updated successfully"
                 }
@@ -48,8 +49,8 @@ class categoryController extends controller{
                 {parent:category._id}
             ]});
             if(deleted.deletedCount==0) throw createError.InternalServerError("internal server error");
-            return res.status(201).json({
-                statusCode: 201,
+            return res.status(StatusCodes.CREATED).json({
+                statusCode: StatusCodes.CREATED,
                 data:{
                     message: "category deleted successfully"
                 }
@@ -96,8 +97,8 @@ class categoryController extends controller{
             //     }
             // ]);
             const category = await CategoryMoldle.find({parent: undefined} , {__v: 0});
-            return res.status(200).json({
-                statusCode:200,
+            return res.status(StatusCodes.OK).json({
+                statusCode:StatusCodes.OK,
                 data:{
                     category
                 }
@@ -112,8 +113,8 @@ class categoryController extends controller{
             const categories = await CategoryMoldle.aggregate([
                 {$match: {}}
             ]);
-            return res.status(200).json({
-                statusCode: 200,
+            return res.status(StatusCodes.OK).json({
+                statusCode: StatusCodes.OK,
                 data:{
                     categories
                 }
@@ -145,8 +146,8 @@ class categoryController extends controller{
                     }
                 }
             ]);
-            return res.status(200).json({
-                statusCode:200,
+            return res.status(StatusCodes.OK).json({
+                statusCode:StatusCodes.OK,
                 data:{
                     category
                 }
@@ -159,8 +160,8 @@ class categoryController extends controller{
         try {
             const parents = await CategoryMoldle.find({parent: undefined});
             if(!parents) throw createError.InternalServerError("internal server error");
-            return res.status(200).json({
-                statusCode: 200,
+            return res.status(StatusCodes.OK).json({
+                statusCode: StatusCodes.OK,
                 data:{
                     parents
                 }
@@ -174,8 +175,8 @@ class categoryController extends controller{
             const {parent} = req.params;
             const childParents = await CategoryMoldle.find({parent});
             if(!childParents) throw createError.InternalServerError("internal server error");
-            return res.status(200).json({
-                statusCode: 200,
+            return res.status(StatusCodes.OK).json({
+                statusCode: StatusCodes.OK,
                 data:{
                     childParents
                 }

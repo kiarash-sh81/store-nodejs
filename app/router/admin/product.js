@@ -8,7 +8,7 @@ const router = require('express').Router();
  * @swagger
  *  components:
  *      schemas:
- *          Products:
+ *          Product:
  *              type: object
  *              required:
  *                  -   title
@@ -62,7 +62,37 @@ const router = require('express').Router();
  *                  weight:
  *                      type: string
  *                      description: the count of products
+ *                  type:
+ *                      type: string
+ *                      enum: [virtual , phisical]
+ *                      description: type of your product
+ *                  colors:
+ *                      type: string
+ *                      enum:
+ *                          -   black
+ *                          -   white
+ *                          -   red
+ *                          -   green
+ *                          -   blue
  */
+/**
+/**
+ * @swagger
+ *  /admin/products/list:
+ *      get:
+ *          tags: [product(AdminPanel)]
+ *          summery: get products
+ *          parameters:
+ *              -   in: query
+ *                  name: search
+ *                  type: string
+ *                  description: text of search in text, title, short_text
+ *          responses:
+ *              200:
+ *                  description: success
+ *          
+ */
+router.get("/list" ,ProductController.getAllProduct);
 /**
  * @swagger
  *  /admin/products/add:
@@ -74,29 +104,34 @@ const router = require('express').Router();
  *              content:
  *                  multipart/form-data:
  *                      schema:
- *                          $ref: '#/components/schemas/Products'
+ *                          $ref:  '#/components/schemas/Product'
  *          responses:
  *              201:
  *                  description: success
+ *              500:
+ *                  description: internal server error
  *          
  */
-router.post("/add" ,uploadfile.array("images" , 10) ,stringToArray("tags") ,ProductController.addProduct);
+router.post("/add" ,verifyAccessToken, uploadfile.array("images" , 10) ,stringToArray("tags") ,ProductController.addProduct);
 /**
  * @swagger
- *  /admin/products/list:
+ *  /admin/products/{id}:
  *      get:
  *          tags: [product(AdminPanel)]
- *          summery: get products
+ *          summery: find product by id
+ *          parameters:
+ *              -   in: path
+ *                  name: id
+ *                  required: true
+ *                  description: the id of product
  *          responses:
  *              200:
  *                  description: success
- *          
  */
-router.get("/list" ,ProductController.getAllProduct);
 
+router.get("/:id" , ProductController.getOneProduct);
 // router.patch();
 // router.delete();
-// router.get();
 // router.get();
 
 module.exports = {

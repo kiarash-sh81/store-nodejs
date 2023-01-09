@@ -4,6 +4,7 @@ const createError = require('http-errors');
 const path = require('path');
 const { BlogMoldle } = require('../../../models/blogs');
 const { deleteFileInPublic } = require('../../../utils/function');
+const {StatusCodes} = require('http-status-codes');
 class blogController extends controller{
     async createBlog(req, res, next){
         try {
@@ -14,7 +15,7 @@ class blogController extends controller{
             const author = req.user._id;
             const blog = await BlogMoldle.create({title,image ,text,short_text,category,tags , author});
             return res.json({
-                statusCode:201,
+                statusCode:StatusCodes.CREATED,
                 data:{
                     message: "blog created successfully"
                 }
@@ -33,8 +34,8 @@ class blogController extends controller{
         try {
             const {id} = req.params;
             const blog = await this.findBlog(id);
-            return res.status(200).json({
-                statusCode:200,
+            return res.status(StatusCodes.OK).json({
+                statusCode:StatusCodes.OK,
                 data:{
                     blog
                 }
@@ -74,8 +75,8 @@ class blogController extends controller{
                 }}
                 
             ]) 
-            return res.status(200).json({
-                statusCode: 200,
+            return res.status(StatusCodes.OK).json({
+                statusCode: StatusCodes.OK,
                 data:{
                     blogs
                 }
@@ -97,8 +98,8 @@ class blogController extends controller{
             await this.findBlog(id);
             const deletingBlog = await BlogMoldle.deleteOne({_id: id});
             if(deletingBlog.deletedCount == 0) throw createError.InternalServerError("selecter blog didnot deleted please try again");
-            return res.status(200).json({
-                statusCode:200,
+            return res.status(StatusCodes.OK).json({
+                statusCode:StatusCodes.OK,
                 data:{
                     message:"blog deleted successfully"
                 }
@@ -125,8 +126,8 @@ class blogController extends controller{
             });
             const blog = await BlogMoldle.updateOne({_id: id} , {$set: data});
             if(blog.modifiedCount == 0) throw createError.InternalServerError("cant update blog please try again");
-            return res.status(200).json({
-                statusCode:200,
+            return res.status(StatusCodes.OK).json({
+                statusCode:StatusCodes.OK,
                 data:{
                     message: "blog update successfully"
                 }
