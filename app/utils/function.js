@@ -75,11 +75,47 @@ function returnListOfImagesFromRequest(files , fileUploadPath){
     }
 }
 
+function setFeatures(body){
+    const { colors , weight , height , length , width } = body;
+    let feature = {};
+    feature.colors = colors;
+            if(!isNaN(+weight) || !isNaN(+height) || !isNaN(+length) || !isNaN(+width)){
+                if(!weight) feature.weight = 0;
+                else feature.weight = +weight
+                if(!height) feature.height = 0;
+                else feature.height = +height
+                if(!length) feature.length = 0;
+                else feature.length = +length
+                if(!width) feature.width = 0;
+                else feature.width = +width
+            }
+            return feature;
+}
+
+function copyObject(object){
+    return JSON.parse(JSON.stringify(object));
+}
+
+function deleteInvalidData(data = {} , blackList = []){
+    let nullishData = ["" , " " , "0" , 0 , undefined , null];
+    Object.keys(data).forEach(key => {
+        if(blackList.includes(data[key])) delete data[key];
+        if(typeof data[key] == "string") data[key] = data[key].trim();
+        if(Array.isArray(data[key]) && data[key].length > 0) data[key] = data[key].map(item => item.trim());
+        if(Array.isArray(data[key]) && data[key].length == 0) delete data[key]
+        if(Array.isArray(data[key]) && data[key].length < 1) delete data[key]
+        if(nullishData.includes(data[key])) delete data[key];
+    });
+}
+
 module.exports ={
     randomNumberGenerator,
     SignAccessToken,
     SignRefreshToken,
     verifyRefreshToken,
     deleteFileInPublic,
-    returnListOfImagesFromRequest
+    returnListOfImagesFromRequest,
+    copyObject,
+    setFeatures,
+    deleteInvalidData
 }
