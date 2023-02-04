@@ -12,7 +12,7 @@ const chapter = new Schema({
     episodes:{type:[episodes] , default:[]}
 });
 
-const schema = new Schema({
+const courseSchema = new Schema({
     title : {type: String , requierd: true},
     short_text : {type: String , requierd: true},
     text : {type: String , requierd: true},
@@ -26,12 +26,15 @@ const schema = new Schema({
     price : {type: Number , default: 0},
     discount : {type: Number , default: 0},
     type : {type: String ,default:"free"/*free , cash , special */ ,requierd: true},
+    status:{type: String , default: "notStarted"/*holding , notStarted , completed*/},
     time : {type: String , default: "00:00:00" },
     teacher : {type: mongoose.Types.ObjectId ,ref: "user", requierd: true},
-    chapter:{type: [chapter] , default: []},
+    chapters:{type: [chapter] , default: []},
     students: {type: [mongoose.Types.ObjectId] , ref: "user" ,default: []}
-});
+} ,{toJSON:{virtuals:true}});
+
+courseSchema.index({title: "text" , short_text: "text" , text: "text"});
 
 module.exports ={
-    Courses : mongoose.model("course",schema)
+    CoursesModel : mongoose.model("course",courseSchema)
 }

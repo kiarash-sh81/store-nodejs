@@ -1,23 +1,16 @@
 const { blogAdminController } = require('./blog');
 const { categoryRoutes } = require('./category');
+const { chapterRoutes } = require('./chapter');
+const { courseRotes } = require('./course');
 const { productRoutes } = require('./product');
 
 const router = require('express').Router();
-/**
- * @swagger
- *  tags:
- *       -  name: Admin-Panel
- *          description: action of admin (add , edite , remove , and any do)
- *       -  name: product(AdminPanel)
- *          description: action of admins for products(add , edite , remove , and any do)
- *       -  name: Category(AdminPanel)
- *          description: all methods and routs about category
- *       -  name: Blog(Admin-Panel)
- *          description: made blog management admin panel
- */
+
 router.use("/category" , categoryRoutes);
 router.use("/blogs" ,blogAdminController);
 router.use("/products" , productRoutes);
+router.use("/course" , courseRotes);
+router.use("/chapter" , chapterRoutes);
 
 module.exports ={
     AdminRoutes: router

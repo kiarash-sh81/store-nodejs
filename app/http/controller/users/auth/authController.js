@@ -14,12 +14,14 @@ class Authentication extends controller{
             const code = randomNumberGenerator();
             const resualt = await this.saveUser(phone , code);
             if(!resualt) throw createError.Unauthorized("cant loging you"); 
-            return res.status(200).send({
+            return res.status(StatusCodes.OK).send({
                 data:{
-                    statusCode:200,
-                    message: "authentication code send to you successfully",
-                    code,
-                    phone
+                    statusCode:StatusCodes.OK,
+                    data:{
+                        message: "authentication code send to you successfully",
+                        code,
+                        phone
+                    }
                 }
             });
         } catch (error) {
@@ -37,7 +39,8 @@ class Authentication extends controller{
             if(+user.otp.expiresIn < now) throw createError.Unauthorized("code has been expired");
             const AccessToken =await SignAccessToken(user._id);
             const refreshToken = await SignRefreshToken(user._id);
-            return res.json({
+            return res.status(StatusCodes.OK).json({
+                statusCode: StatusCodes.OK,
                 data:{
                     AccessToken,
                     refreshToken
@@ -54,7 +57,8 @@ class Authentication extends controller{
             const user = await UserMoldle.findOne({phone});
             const accesstoken = await SignAccessToken(user._id);
             const newRefreshToken = await SignRefreshToken(user._id);
-            return res.json({
+            return res.status(StatusCodes.OK).json({
+                statusCode: StatusCodes.OK,
                 data:{
                     accesstoken,
                     newRefreshToken

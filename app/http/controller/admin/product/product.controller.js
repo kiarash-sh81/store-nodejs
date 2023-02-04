@@ -1,10 +1,10 @@
 const createHttpError = require('http-errors');
 const path = require('path');
-const { ProductsMoldle } = require('../../../models/products');
-const { deleteFileInPublic, returnListOfImagesFromRequest, copyObject, setFeatures, deleteInvalidData } = require('../../../utils/function');
-const { createProductSchema } = require('../../validator/admin/product.schema');
-const { ObjectIdValidator } = require('../../validator/publicValidator');
-const controller = require('../controller');
+const { ProductsMoldle } = require('../../../../models/products');
+const { deleteFileInPublic, returnListOfImagesFromRequest, copyObject, setFeatures, deleteInvalidData } = require('../../../../utils/function');
+const { createProductSchema } = require('../../../validator/admin/product.schema');
+const { ObjectIdValidator } = require('../../../validator/publicValidator');
+const controller = require('../../controller');
 const {StatusCodes} = require('http-status-codes');
 const { object } = require('@hapi/joi');
 const ProductBlackList = {
@@ -62,8 +62,10 @@ class ProductController extends controller{
             if(updateProductResualt.modifiedCount == 0) throw {statusCode: StatusCodes.INTERNAL_SERVER_ERROR , success: false , message: "internal server error"} 
             return res.status(StatusCodes.OK).json({
                 statusCode: StatusCodes.OK,
-                success:true,
-                message: "update product successfully"
+                data:{
+                    success:true,
+                    message: "update product successfully"
+                }
             });
         } catch (error) {
             next(error)
@@ -83,7 +85,6 @@ class ProductController extends controller{
             }else{
                 product = await ProductsMoldle.find({})
             }
-            //  product = await ProductsMoldle.find({});
             return res.status(StatusCodes.OK).json({
                 product
             })

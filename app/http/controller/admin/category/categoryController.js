@@ -1,7 +1,7 @@
-const{ CategoryMoldle }= require('../../../models/categories');
+const{ CategoryMoldle }= require('../../../../models/categories');
 const createError = require('http-errors');
-const { addcategorySchema } = require('../../validator/admin/category.schema');
-const controller = require('../controller');
+const { addcategorySchema } = require('../../../validator/admin/category.schema');
+const controller = require('../../controller');
 const mongoose = require('mongoose');
 const {StatusCodes} = require('http-status-codes');
 
@@ -13,8 +13,8 @@ class categoryController extends controller{
             const category =await CategoryMoldle.create({title , parent});
             if(!category) throw createError.InternalServerError("internal server error");
             return res.status(StatusCodes.CREATED).json({
+                statusCode:StatusCodes.CREATED,
                 data:{
-                    statusCode:StatusCodes.CREATED,
                     success:true,
                     message:"category created successfully"
                 }
