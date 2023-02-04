@@ -13,7 +13,17 @@ const createCourseSchema = Joi.object({
     discount: Joi.number().error(creatError.BadRequest("discount is not valid")),
     fileUploadPath: Joi.allow()
 });
+const createEpisodeSchema = Joi.object({
+    title: Joi.string().min(3).max(60).error(creatError.BadRequest("the title is incorecct")),
+    text: Joi.string().error(creatError.BadRequest("text is incorecct")),
+    type: Joi.string().regex(/lock|unlock/i),
+    courseID: Joi.string().pattern(MongoIdPattern).error(creatError.BadRequest("selected course is not correct")),
+    chapterID: Joi.string().pattern(MongoIdPattern).error(creatError.BadRequest("selected chapter is not correct")),
+    fileUploadPath: Joi.allow(),
+    fileName: Joi.string().pattern(/(\.mov|\.mp4|\.mpg|\.avi|\.mkv)$/).error(creatError.BadRequest("image that send is incorecct"))
+});
 
 module.exports = {
-    createCourseSchema
+    createCourseSchema,
+    createEpisodeSchema
 }

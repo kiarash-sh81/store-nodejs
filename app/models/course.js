@@ -3,7 +3,7 @@ const { commentSchema } = require('./public.schema');
 const episodes = new Schema({
     title:{type: String , requierd: true},
     text:{type: String , requierd: true},
-    type:{type: String , default: "free"},
+    type:{type: String , default: "unlock"},
     time:{type: String , requierd: true}
 });
 const chapter = new Schema({

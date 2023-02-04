@@ -108,6 +108,20 @@ function deleteInvalidData(data = {} , blackList = []){
     });
 }
 
+function getTime(seconds){
+    let total = Math.round(seconds) / 60;
+    let [minutes , persent] = String(total).split(".");
+    let second =  Math.round((persent*60)/100).toString().substring(0 , 2);
+    let houre = 0;
+    if(minutes > 60){
+        total = minutes / 60
+        let [h1 , persent] = String(total).split(".");
+        houre = h1;
+        minutes = Math.round((persent * 60) / 100).toString().substring(0 , 2);
+    }
+    return (houre + ":" + minutes + ":" + second);
+}
+
 module.exports ={
     randomNumberGenerator,
     SignAccessToken,
@@ -117,5 +131,6 @@ module.exports ={
     returnListOfImagesFromRequest,
     copyObject,
     setFeatures,
-    deleteInvalidData
+    deleteInvalidData,
+    getTime
 }
