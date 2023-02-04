@@ -4,7 +4,8 @@ const episodes = new Schema({
     title:{type: String , requierd: true},
     text:{type: String , requierd: true},
     type:{type: String , default: "unlock"},
-    time:{type: String , requierd: true}
+    time:{type: String , requierd: true},
+    videoAddress: {type: String , default : ""}
 });
 const chapter = new Schema({
     title: {type: String , requierd: true},

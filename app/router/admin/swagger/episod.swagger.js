@@ -53,3 +53,21 @@
  *                  description: success
  *                  
  */
+
+/**
+ * @swagger
+ *  /admin/episode/remove/{episodeID}:
+ *      delete:
+ *          tags: [episod(Admin-Panel)]
+ *          summery: remove episode
+ *          description: remove episode
+ *          parameters:
+ *              -   in: path
+ *                  name: episodeID
+ *                  type: string
+ *                  required: true
+ *          responses:
+ *              200:
+ *                  description: success
+ *                  
+ */
