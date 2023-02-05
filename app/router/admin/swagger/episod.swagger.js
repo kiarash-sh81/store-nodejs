@@ -33,6 +33,24 @@
  *                      type: string
  *                      description: the file of video
  *                      format: binary
+ *          updateEpisode:
+ *              type: object
+ *              properties:
+ *                  title:
+ *                      type: string
+ *                      example: the title of episode 1
+ *                  text:
+ *                      type: string
+ *                      example: the text about episode
+ *                  type:
+ *                      type: string
+ *                      enum: 
+ *                          -   lock
+ *                          -   unlock
+ *                  video:
+ *                      type: string
+ *                      description: the file of video
+ *                      format: binary
 */
 
 /**
@@ -66,6 +84,30 @@
  *                  name: episodeID
  *                  type: string
  *                  required: true
+ *          responses:
+ *              200:
+ *                  description: success
+ *                  
+ */
+
+/**
+ * @swagger
+ *  /admin/episode/update/{episodeID}:
+ *      patch:
+ *          tags: [episod(Admin-Panel)]
+ *          summery: update episode
+ *          description: update episode
+ *          parameters:
+ *              -   in: path
+ *                  name: episodeID
+ *                  type: string
+ *                  required: true
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  multipart/form-data:
+ *                      schema:
+ *                          $ref: "#/components/schemas/updateEpisode"
  *          responses:
  *              200:
  *                  description: success

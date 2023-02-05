@@ -6,6 +6,9 @@ const episodes = new Schema({
     type:{type: String , default: "unlock"},
     time:{type: String , requierd: true},
     videoAddress: {type: String , default : ""}
+}, {toJSON:{virtuals: true}});
+episodes.virtual("videoURL").get(function(){
+    return `http://localhost:3000/${this.videoAddress}`
 });
 const chapter = new Schema({
     title: {type: String , requierd: true},
@@ -35,6 +38,9 @@ const courseSchema = new Schema({
 } ,{toJSON:{virtuals:true}});
 
 courseSchema.index({title: "text" , short_text: "text" , text: "text"});
+courseSchema.virtual("imageURL").get(function(){
+    return `http://localhost:3000/${this.images}`
+})
 
 module.exports ={
     CoursesModel : mongoose.model("course",courseSchema)

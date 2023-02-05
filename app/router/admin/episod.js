@@ -5,6 +5,7 @@ const router = require('express').Router();
 
 router.post("/add" ,uploadvideofile.single("video") , episodController.addEpisode);
 router.delete("/remove/:episodeID" , episodController.removeEpisode);
+router.patch("/update/:episodeID" ,uploadvideofile.single("video"), episodController.updateEpisode);
 
 module.exports ={
     episodeRoutes : router

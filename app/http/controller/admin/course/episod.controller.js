@@ -2,7 +2,7 @@ const { createEpisodeSchema } = require('../../../validator/admin/course.schema'
 const controller = require('../../controller');
 const path = require('path');
 const { getVideoDurationInSeconds } = require('get-video-duration');
-const { getTime } = require('../../../../utils/function');
+const { getTime, deleteInvalidData, copyObject } = require('../../../../utils/function');
 const { CoursesModel } = require('../../../../models/course');
 const createHttpError = require('http-errors');
 const {isValidObjectId} = require('mongoose');
@@ -55,6 +55,53 @@ class episodController extends controller {
         } catch (error) {
             next(error)
         }
+    }
+    async updateEpisode(req, res, next){
+        try {
+            const{episodeID} = req.params;
+            const episode = await this.getOneEpisode(episodeID);
+            console.log(episode);
+            const {fileName , fileUploadPath} = req.body;
+            let blackList = ["_id"];
+            if(fileName && fileUploadPath){
+                 req.body.videoAddress = path.join(fileUploadPath , fileName);
+                const videoUrl = `http://localhost:3000/${req.body.videoAddress}`;
+                const seconds = await getVideoDurationInSeconds(videoUrl);
+                req.body.time = getTime(seconds);
+                blackList.push("fileName");
+                blackList.push("fileUploadPath")
+            } else{
+                blackList.push("time");
+                blackList.push("videAddress");
+            }
+            const data = {...req.body}
+            deleteInvalidData(data , blackList);
+            const newEpisode = {...episode , ...data}
+            const editeEpisodeResualt = await CoursesModel.updateOne({"chapters.episodes._id" : episodeID} , {
+                $set :{
+                    "chapters.$.episodes" : newEpisode
+                }
+            });
+            if(!editeEpisodeResualt.modifiedCount) throw createHttpError.InternalServerError("cant update episode");
+            return res.status(StatusCodes.OK).json({
+                statusCode: StatusCodes.OK,
+                data:{
+                    message: "episode updated successfully"
+                }
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getOneEpisode(episodeID){
+        const course = await CoursesModel.findOne({"chapters.episodes._id" : episodeID}  , {
+            "chapters.$.episodes": 1
+        });
+        console.log(course);
+        if(!course) throw createHttpError.NotFound("episode not founded");
+        const episode = await course?.chapters?.[0]?.episodes?.[0];
+        return copyObject(episode)
     }
 }
 

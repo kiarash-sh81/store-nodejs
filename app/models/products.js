@@ -27,9 +27,11 @@ const Productschema = new Schema({
         model: [],
         madein:""
     }},
-});
+}, {toJSON:{virtuals: true}});
 Productschema.index({title : "text" , short_text : "text", text : "text"});
-
+Productschema.virtual("imagesURL").get(function(){
+    return this.images.map(image => `http://localhost:3000/${image}`)
+})
 module.exports ={
     ProductsMoldle : mongoose.model("products",Productschema)
 }

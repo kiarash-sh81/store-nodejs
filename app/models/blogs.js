@@ -25,6 +25,9 @@ schema.virtual("category_deteils" , {
     localField: "_id",
     foreignField: "category"
 });
+schema.virtual("imageURL").get(function(){
+    return `http://localhost:3000/${this.image}`
+})
 
 module.exports ={
     BlogMoldle : mongoose.model("blog",schema)
