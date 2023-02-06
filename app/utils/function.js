@@ -125,6 +125,28 @@ function getTime(seconds){
     return (houre + ":" + minutes + ":" + second);
 }
 
+function getCourseTime(chapters){
+    let time , houre , minutes , seconds = 0;
+    for (const chapter of chapters) {
+        if(Array.isArray(chapter?.episodes)){
+            for (const episode of chapter.episodes) {
+                if (episode?.time) time = episode.time.split(":");//[houre , minutes , secondes]
+                else time = "00:00:00".split(":")
+                if(time.length == 3){
+                    seconds += Number(time[0]) * 3600;//convert houre to second
+                    seconds += Number(time[1]) * 60;//convert minutes to second
+                    seconds += Number(time[2]) ;// convert second to second
+                }else if(time.length == 2){
+                    seconds += Number(time[0]) * 60;//convert minutes to second
+                    seconds += Number(time[1]) ;// convert second to second
+                }
+            }
+        }
+    }
+    let total = getTime(seconds);
+    return total
+}
+
 module.exports ={
     randomNumberGenerator,
     SignAccessToken,
@@ -135,5 +157,6 @@ module.exports ={
     copyObject,
     setFeatures,
     deleteInvalidData,
-    getTime
+    getTime,
+    getCourseTime
 }

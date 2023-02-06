@@ -13,8 +13,8 @@ router.post("/add", uploadfile.single("image") , stringToArray("tags") , courseC
 
 router.get("/:id" , courseController.getCourseById);
 
+router.patch("/update/:id" ,uploadfile.single("image"), courseController.updateCourse) //* edite a course
 // router.post() //* create new episodes
-// router.patch() //* edite a course
 // router.delete() //* delete a course
 
 module.exports={

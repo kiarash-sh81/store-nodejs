@@ -1,4 +1,5 @@
 const {Schema, default: mongoose} = require('mongoose');
+const { getCourseTime } = require('../utils/function');
 const { commentSchema } = require('./public.schema');
 const episodes = new Schema({
     title:{type: String , requierd: true},
@@ -40,6 +41,9 @@ const courseSchema = new Schema({
 courseSchema.index({title: "text" , short_text: "text" , text: "text"});
 courseSchema.virtual("imageURL").get(function(){
     return `http://localhost:3000/${this.images}`
+});
+courseSchema.virtual("totalTime").get(function(){
+    return getCourseTime(this.chapters);
 })
 
 module.exports ={

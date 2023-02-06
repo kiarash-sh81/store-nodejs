@@ -95,9 +95,9 @@ class episodController extends controller {
     }
 
     async getOneEpisode(episodeID){
-        const course = await CoursesModel.findOne({"chapters.episodes._id" : episodeID}  , {
+        const course = await CoursesModel.findOne({"chapters.episodes._id": episodeID}, {
             "chapters.$.episodes": 1
-        });
+        })
         console.log(course);
         if(!course) throw createHttpError.NotFound("episode not founded");
         const episode = await course?.chapters?.[0]?.episodes?.[0];

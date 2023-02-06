@@ -4,6 +4,7 @@ const {StatusCodes} = require('http-status-codes');
 const path  =require('path');
 const { createCourseSchema } = require("../../../validator/admin/course.schema");
 const createHttpError = require("http-errors");
+const { copyObject, deleteInvalidData, deleteFileInPublic } = require("../../../../utils/function");
 class courseController extends controller{
     async getAllCourse(req, res, next){
         try {
@@ -70,6 +71,33 @@ class courseController extends controller{
                 statusCode: StatusCodes.OK,
                 data:{
                     course
+                }
+            });
+        } catch (error) {
+            next(error)
+        }
+    }
+    async updateCourse(req, res, next){
+        try {
+            const {id} = req.params;
+            const course = await this.findCourseById(id);
+            let data = copyObject(req.body);
+            const {fileName , fileUploadPath} = req.body
+            let blackList = ["time","chapters","episodes","students","bookmarks","likes","dislikes","comments","filName","fileUploadPath"]
+            deleteInvalidData(data , blackList);
+            if(req.file){
+                req.images = path.join(fileUploadPath , fileName);
+                deleteFileInPublic(course.images);
+            }
+            const updateCourse = await CoursesModel.updateOne({_id : id} , {
+                $set:data
+            });
+            console.log(updateCourse);
+            if(!updateCourse.modifiedCount) throw createHttpError.InternalServerError("cant update course");
+            return res.status(StatusCodes.OK).json({
+                statusCode: StatusCodes.OK,
+                data:{
+                    message: "updating course successfully"
                 }
             });
         } catch (error) {

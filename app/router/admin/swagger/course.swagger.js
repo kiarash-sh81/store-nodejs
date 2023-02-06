@@ -183,6 +183,58 @@
 
 /**
  * @swagger
+ *  /admin/course/update/{id}:
+ *      patch:
+ *          tags: [course(Admin-Panel)]
+ *          summery: create new course
+ *          parameters:
+ *              -   in: path
+ *                  name: id
+ *                  type: string
+ *                  required: true
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  multipart/form-data:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              title:
+ *                                  type: string
+ *                                  description: the title of course
+ *                              text:
+ *                                  type: string
+ *                                  description: the text of course
+ *                              short_text:
+ *                                  type: string
+ *                                  description: the short text of course
+ *                              tags:
+ *                                  type: array
+ *                                  description: the tags of course
+ *                              category:
+ *                                  type: string
+ *                                  description: the category of course
+ *                              price:
+ *                                  type: string
+ *                                  description: the price of course
+ *                              discount:
+ *                                  type: string
+ *                                  description: the discount of course
+ *                              images:
+ *                                  type: string
+ *                                  format: binary
+ *                              type:
+ *                                  $ref: '#/components/schemas/Types'
+ *          responses:
+ *              201:
+ *                  description: success
+ *              500:
+ *                  description: internal server error
+ *          
+ */
+
+/**
+ * @swagger
  *  /admin/course/{id}:
  *      get:
  *          tags: [course(Admin-Panel)]
