@@ -3,6 +3,10 @@
  *  tags:
  *       -  name: Admin-Panel
  *          description: action of admin (add , edite , remove , and any do)
+ *       -  name: RBAC(Admin-Panel)
+ *          description: the system of role management
+ *       -  name: user(Admin-Panel)
+ *          description: action of admin for user
  *       -  name: course(Admin-Panel)
  *          description: Management of courses
  *       -  name: chapter(Admin-Panel)
