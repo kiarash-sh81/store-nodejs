@@ -1,3 +1,4 @@
+const { checkPermission } = require('../../http/middlewares/Permission.Guard');
 const { blogAdminController } = require('./blog');
 const { categoryRoutes } = require('./category');
 const { chapterRoutes } = require('./chapter');
@@ -16,7 +17,7 @@ router.use("/products" , productRoutes);
 router.use("/course" , courseRotes);
 router.use("/chapter" , chapterRoutes);
 router.use("/episode" , episodeRoutes);
-router.use("/user" , userRouts);
+router.use("/user" ,checkPermission(["USER"]), userRouts);
 router.use("/role" , roleRoutes);
 router.use("/permission" , permissionRoutes);
 

@@ -42,6 +42,21 @@ class userController extends controler{
             next(error)
         }
     }
+    async getUserProfile(req, res, next){
+        try {
+            const id = req.user._id;
+            const user = await  UserMoldle.findOne({_id: id} , {otp:0});
+            if(!user) throw createHttpError.InternalServerError("cant find user profile");
+            return res.status(StatusCodes.OK).json({
+                statusCode: StatusCodes.OK,
+                data:{
+                    user
+                }
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
 }
 
 module.exports = {

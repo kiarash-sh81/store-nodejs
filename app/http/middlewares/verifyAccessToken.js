@@ -31,19 +31,8 @@ function verifyAccessToken(req, res, next){
     }
 }
 
-function checkRole(role){
-    return function(req, res, next){
-        try {
-            const user = req.user;
-            if(user.Roles.includes(role)) return next();
-            throw createError.Forbidden("your access denied");  
-        } catch (error) {
-            next(error)
-        }
-    }
-}
+
 
 module.exports ={
     verifyAccessToken,
-    checkRole
 }

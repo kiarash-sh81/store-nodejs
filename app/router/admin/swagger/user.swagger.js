@@ -80,6 +80,17 @@
  *                          schema:
  *                              $ref: "#/definitions/ListOfUsers"
  */
+/**
+ * @swagger
+ *  /admin/user/profile:
+ *      get:
+ *          tags: [user(Admin-Panel)]
+ *          summery: get user profile
+ *          description: get user profile
+ *          responses:
+ *              200:
+ *                  description: success
+ */
 
 
 /**

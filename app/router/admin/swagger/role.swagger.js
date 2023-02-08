@@ -6,6 +6,7 @@
  *              type: object
  *              required:
  *                  -   title
+ *                  -   description
  *              properties:
  *                  title:
  *                      type: string
@@ -13,6 +14,9 @@
  *                  permission:
  *                      type: array
  *                      description: the array of roles
+ *                  description:
+ *                      type: string
+ *                      description: the description of roles
  *                  
  */
 /**
@@ -25,8 +29,12 @@
  *                  title:
  *                      type: string
  *                      description: the title of role
+ *                  description:
+ *                      type: string
+ *                      description: the desc of role
  *                  permissions:
- *                      $ref: '#/components/schemas/permissions'
+ *                      type:  array
+ *                      description: the perms of roles
  *                  
  */
 
@@ -53,6 +61,9 @@
  *                                      title:
  *                                          type: string
  *                                          example: "this is the title"
+ *                                      description:
+ *                                          type: string
+ *                                          example: "this is the description"
  *                                      permission:
  *                                          type: array
  *                                          items:

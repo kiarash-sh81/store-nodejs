@@ -14,7 +14,7 @@ const Userschema = new Schema({
     bills: {type: [] , default: []},
     discount: {type: Number , default: 0},
     birthDay: {type: String},
-    Roles: {type: [] , default: ["USER"]},
+    Role: {type: String , default: "USER"},
     courses:{type: [mongoose.Types.ObjectId] , ref: "course" , default: []}
 },{timestamps: true,toJSON:{virtuals: true}});
 Userschema.index({phone: "text" ,first_name: "text" , last_name: "text" , username: "text" , email: "text"});

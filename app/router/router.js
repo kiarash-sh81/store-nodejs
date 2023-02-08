@@ -7,7 +7,7 @@ const { userAuthentication } = require('./users/auth');
 const router = require('express').Router();
 
 router.use("/user" , userAuthentication);
-router.use("/admin" ,verifyAccessToken , checkRole("ADMIN"), AdminRoutes);
+router.use("/admin" ,verifyAccessToken , AdminRoutes);
 router.use("/" ,homeRoutes);
 
 module.exports = {

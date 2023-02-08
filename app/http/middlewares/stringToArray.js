@@ -13,6 +13,11 @@ const stringToArray = function(filed){
             }else if((req.body[filed].constructor).toString().toLowerCase().indexOf("array") >= 0){
                 req.body[filed] = req.body[filed].map(item => item.trim());
             }
+            if(Array.isArray(req.body[filed])){
+                req.body[filed] = req.body[filed].map(item => item.trim());
+                console.log(req.body[filed]);
+                // req.body[filed] = {...new Set(req.body[filed])}
+            }
         }else{
             req.body[filed] = [];
         }

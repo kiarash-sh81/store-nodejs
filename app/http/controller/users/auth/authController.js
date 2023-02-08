@@ -77,7 +77,7 @@ class Authentication extends controller{
         if(resualt){
             return (await this.updateUser(phone , otp))
         }
-        return !!(await UserMoldle.create({phone , otp , Roles: [USER_ROLE]}))
+        return !!(await UserMoldle.create({phone , otp , Role: USER_ROLE.USER}))
     }
     async checkExistUser(phone){
         const user = await UserMoldle.findOne({phone});

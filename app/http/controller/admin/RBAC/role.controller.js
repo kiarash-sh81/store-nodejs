@@ -2,6 +2,7 @@ const createHttpError = require('http-errors');
 const { StatusCodes } = require('http-status-codes');
 const { default: mongoose } = require('mongoose');
 const { RoleModel } = require('../../../../models/role');
+const { copyObject, deleteInvalidData } = require('../../../../utils/function');
 const { addRoleValidation } = require('../../../validator/admin/role');
 const controller = require('../../controller');
 class roleControoler extends controller{
@@ -21,6 +22,7 @@ class roleControoler extends controller{
 
     async addRole(req, res, next){
         try {
+            console.log(req.body);
             const {title , permission} = await addRoleValidation.validateAsync(req.body);
             await this.findRole(title);
             const role = await RoleModel.create({title , permission});
@@ -46,6 +48,26 @@ class roleControoler extends controller{
                 statusCode: StatusCodes.OK,
                 data:{
                     message: "role deleted successfully"
+                }
+            })
+
+        } catch (error) {
+            next(error)
+        }
+    }
+    async updateRole(req, res, next){
+        try {
+            const {id} = req.params;
+            const role = await this.findRoleByIdOrTitle(id);
+            const data = copyObject(req.body);
+            await deleteInvalidData(data , []);
+            console.log(data);
+            const updateRoleResualt = await RoleModel.updateOne({_id: role._id} , {$set:data});
+            if(!updateRoleResualt.modifiedCount) throw createHttpError.InternalServerError("cant update role");
+            return res.status(StatusCodes.OK).json({
+                statusCode: StatusCodes.OK,
+                data:{
+                    message: "role updated successfully"
                 }
             })
 
