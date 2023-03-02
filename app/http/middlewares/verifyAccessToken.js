@@ -30,9 +30,22 @@ function verifyAccessToken(req, res, next){
         next(error)
     }
 }
+ async function graphQLverifyAccessToken(req){
+    try {
+        const headers = req.headers;
+        const token = getToken(headers);
+        const {phone} =JWT.verify(token ,ACCESS_SECRET_KEY) 
+        const user = await UserMoldle.findOne({phone} , {password: 0 , otp:0 , bills: 0});
+        if(!user) throw createError.NotFound("user not founded");
+        return user
+    } catch (error) {
+        throw new createError.Unauthorized()
+    }
+}
 
 
 
 module.exports ={
     verifyAccessToken,
+    graphQLverifyAccessToken
 }
