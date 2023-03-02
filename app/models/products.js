@@ -17,7 +17,7 @@ const Productschema = new Schema({
     count : {type: Number },
     type : {type: String , requierd: true},
     format : {type: String },
-    suplier : {type: mongoose.Types.ObjectId , requierd: true},
+    suplier : {type: mongoose.Types.ObjectId , ref: "user",requierd: true},
     feature : {type: Object , default:{
         length:"",
         height:"",

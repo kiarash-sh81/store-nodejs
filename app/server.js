@@ -63,6 +63,7 @@ module.exports = class Application{
     )
 }
     connectToDatabase(){
+        mongoose.set("strictQuery" , false);
         mongoose.connect(this.#DB_URI , (error)=>{
             if(!error) return console.log("connecting to DB Successfully...");
             return console.log("there is an error in connecting to DB please check that!");

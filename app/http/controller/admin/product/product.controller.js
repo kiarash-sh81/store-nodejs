@@ -83,7 +83,7 @@ class ProductController extends controller{
                     }
                 });
             }else{
-                product = await ProductsMoldle.find({})
+                product = await ProductsMoldle.find({}).populate([{path: "category"}, {path: "suplier"}])
             }
             return res.status(StatusCodes.OK).json({
                 product
