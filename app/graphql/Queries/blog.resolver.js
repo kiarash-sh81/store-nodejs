@@ -13,7 +13,10 @@ const blogResolver = {
         req.user =await graphQLverifyAccessToken(req);
         const {category} = args;
         const findQuery = category ? {category} : {};
-        return await BlogMoldle.find(findQuery).populate([{path: "author"} , {path: "category"}]);
+        return await BlogMoldle.find(findQuery).populate([{path: "author"}
+         ,{path: "category"} ,
+          {path: "comments.user"}, 
+          {path: "comments.answers.user"}]);
     }
 }
 
