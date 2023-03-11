@@ -9,6 +9,7 @@ const { ProductsMoldle } = require("../../models/products");
 const { copyObject } = require("../../utils/function");
 const { CommentType } = require("../typeDefs/comment.types");
 const { responseType } = require("../typeDefs/public.type");
+const { CheckExistBlog, CheckExistCourse, CheckExistProduct } = require("../utils");
 
 const creatCommentType ={
     type: responseType,
@@ -200,21 +201,7 @@ const creatCommentTypeForProduct ={
     }
 }
  
-async function CheckExistBlog(id){
-    const blog = await BlogMoldle.findOne({_id: id});
-    if(!blog) throw createHttpError.NotFound("blog not founded");
-    return blog;
-}
-async function CheckExistCourse(id){
-    const course = await CoursesModel.findOne({_id: id});
-    if(!course) throw createHttpError.NotFound("course not founded");
-    return course;
-}
-async function CheckExistProduct(id){
-    const product = await ProductsMoldle.findOne({_id: id});
-    if(!product) throw createHttpError.NotFound("product not founded");
-    return product;
-}
+
 async function CheckExistComment(model ,id){
     const findedComment = await model.findOne({"comments._id" : id} , {"comments.$" : 1});
     const comment = findedComment;
