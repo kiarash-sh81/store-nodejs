@@ -7,7 +7,7 @@ const { ProductsMoldle } = require("../../models/products");
 const { responseType } = require("../typeDefs/public.type");
 const { CheckExistProduct, CheckExistCourse, CheckExistBlog } = require("../utils");
 
-const LikeProduct = {
+const DisLikeProduct = {
     type: responseType,
     args:{
         productID : {type: GraphQLString}
@@ -20,13 +20,13 @@ const LikeProduct = {
         let message = ""
         const LikedProduct = await ProductsMoldle.findOne({_id: productID , likes: user._id});
         const DisLikedProduct = await ProductsMoldle.findOne({_id: productID , dislikes: user._id});
-        let Query = LikedProduct ? {$pull: {likes: user._id}} : {$push: {likes: user._id}};
+        let Query = DisLikedProduct ? {$pull: {dislikes: user._id}} : {$push: {dislikes: user._id}};
         await ProductsMoldle.updateOne({_id: productID} , Query);
-        if(!LikedProduct) {
-            if(DisLikedProduct) await ProductsMoldle.updateOne({_id: productID} , {$pull: {dislikes: user._id}});
-            message = "liked product successfully"
+        if(!DisLikedProduct) {
+            if(LikedProduct) await ProductsMoldle.updateOne({_id: productID} , {$pull: {likes: user._id}});
+            message = "disliked product successfully"
         }else{
-            message = "liked product cancel successfully"
+            message = "disliked product cancel successfully"
         }
         return {
             statusCode: StatusCodes.CREATED,
@@ -36,7 +36,7 @@ const LikeProduct = {
         }
     }
 }
-const LikeCourse = {
+const DisLikeCourse = {
     type: responseType,
     args:{
         courseID : {type: GraphQLString}
@@ -49,13 +49,13 @@ const LikeCourse = {
         let message = ""
         const LikedCourse = await CoursesModel.findOne({_id: courseID , likes: user._id});
         const DisLikedCourse = await CoursesModel.findOne({_id: courseID , dislikes: user._id});
-        let Query = LikedCourse ? {$pull: {likes: user._id}} : {$push: {likes: user._id}};
+        let Query = DisLikedCourse ? {$pull: {dislikes: user._id}} : {$push: {dislikes: user._id}};
         await CoursesModel.updateOne({_id: courseID} , Query);
-        if(!LikedCourse) {
-            if(DisLikedCourse) await CoursesModel.updateOne({_id: courseID} , {$pull: {dislikes: user._id}});
-            message = "liked course successfully"
+        if(!DisLikedCourse) {
+            if(LikedCourse) await CoursesModel.updateOne({_id: courseID} , {$pull: {likes: user._id}});
+            message = "disliked course successfully"
         }else{
-            message = "liked course cancel successfully"
+            message = "disliked course cancel successfully"
         }
         return {
             statusCode: StatusCodes.CREATED,
@@ -65,7 +65,7 @@ const LikeCourse = {
         }
     }
 }
-const LikeBlog = {
+const DisLikeBlog = {
     type: responseType,
     args:{
         blogID : {type: GraphQLString}
@@ -78,13 +78,13 @@ const LikeBlog = {
         let message = "";
         const LikedBlog = await BlogMoldle.findOne({_id: blogID , likes: user._id});
         const DisLikedBlog = await BlogMoldle.findOne({_id: blogID , dislikes: user._id});
-        let Query = LikedBlog ? {$pull: {likes: user._id}} : {$push: {likes: user._id}};
+        let Query = DisLikedBlog ? {$pull: {dislikes: user._id}} : {$push: {dislikes: user._id}};
         await BlogMoldle.updateOne({_id: blogID} , Query);
-        if(!LikedBlog) {
-            if(DisLikedBlog) await BlogMoldle.updateOne({_id: blogID} , {$pull: {dislikes: user._id}});
-            message = "liked Blog successfully"
+        if(!DisLikedBlog) {
+            if(LikedBlog) await BlogMoldle.updateOne({_id: blogID} , {$pull: {likes: user._id}});
+            message = "disliked Blog successfully"
         }else{
-            message = "liked Blog cancel successfully"
+            message = "disliked Blog cancel successfully"
         }
         return {
             statusCode: StatusCodes.CREATED,
@@ -96,7 +96,7 @@ const LikeBlog = {
 }
 
 module.exports ={
-    LikeProduct,
-    LikeBlog,
-    LikeCourse
+    DisLikeBlog,
+    DisLikeCourse,
+    DisLikeProduct
 }

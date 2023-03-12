@@ -5,6 +5,7 @@ const { creatCommentType, creatCommentTypeForCourse, creatCommentTypeForProduct}
 const { courseResolver } = require("./Queries/course.resolver");
 const { productResolver } = require("./Queries/product.resolver");
 const { LikeProduct  , LikeBlog, LikeCourse} = require("./mutations/like.resolver");
+const { DisLikeBlog,DisLikeCourse,DisLikeProduct} = require("./mutations/dislike.resolver");
 const rootQuery = new GraphQLObjectType({
     name: "rootQuery",
     fields: {
@@ -24,8 +25,10 @@ const rootMutation = new GraphQLObjectType({
         createCommentForProduct: creatCommentTypeForProduct,
         likeProduct: LikeProduct,
         LikeCourse,
-        LikeBlog
-        
+        LikeBlog,
+        DisLikeCourse,
+        DisLikeBlog,
+        DisLikeProduct
     }
 });
 

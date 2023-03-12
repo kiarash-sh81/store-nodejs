@@ -12,7 +12,10 @@ const productResolver = {
         const findQuery = category ? {category} : {};
         return await ProductsMoldle.find(findQuery).populate([{path: "suplier"} , {path: "category"},
         {path: "comments.user"}, 
-        {path: "comments.answers.user"}]);
+        {path: "comments.answers.user"},
+        {path: "likes"},  
+        {path: "dislikes"},  
+        {path: "bookmarks"}]);
     }
 }
 

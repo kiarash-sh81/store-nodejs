@@ -16,7 +16,11 @@ const blogResolver = {
         return await BlogMoldle.find(findQuery).populate([{path: "author"}
          ,{path: "category"} ,
           {path: "comments.user"}, 
-          {path: "comments.answers.user"}]);
+          {path: "comments.answers.user"},
+          {path: "likes"},  
+          {path: "dislikes"},  
+          {path: "bookmark"} 
+        ]);
     }
 }
 

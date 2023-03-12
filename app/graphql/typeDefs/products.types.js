@@ -19,7 +19,10 @@ const productTypes = new GraphQLObjectType({
         format : {type: GraphQLString},
         suplier : {type: AuthorTypes},
         feature : {type: AnyType},
-        comments : {type: new GraphQLList(CommentType)}
+        comments : {type: new GraphQLList(CommentType)},
+        likes:{type : new GraphQLList(AuthorTypes)},
+        dislikes:{type : new GraphQLList(AuthorTypes)},
+
     }
 });
 
