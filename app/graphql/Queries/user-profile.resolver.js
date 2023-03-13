@@ -4,9 +4,11 @@ const { graphQLverifyAccessToken } = require("../../http/middlewares/verifyAcces
 const { BlogMoldle } = require("../../models/blogs");
 const { CoursesModel } = require("../../models/course");
 const { ProductsMoldle } = require("../../models/products");
+const { UserMoldle } = require("../../models/users");
 const { blogTypes } = require("../typeDefs/blogs.types");
 const { courseTypes } = require("../typeDefs/course.types");
 const { productTypes } = require("../typeDefs/products.types");
+const { AnyType } = require("../typeDefs/public.type");
 
 const userBookmarkBlogs = {
     type: new GraphQLList(blogTypes),
@@ -62,9 +64,95 @@ const userBookmarkProduct = {
         return product
     }
 }
+const getUserBasket = {
+    type: AnyType,
+    args:{
+        
+    },
+    resolve: async(_ , args , context)=>{
+        const {req} = context;
+        const user =await graphQLverifyAccessToken(req);
+        const basketDetail = await UserMoldle.aggregate([
+            {
+                $match: {
+                    _id : user._id
+                },
+            },
+            {
+                $project:{
+                    basket:1
+                },
+
+            },
+            {
+
+                $lookup:{
+                    from: "products",
+                    localField: "basket.product.productID",
+                    foreignField: "_id",
+                    as: "productDetail"
+                },
+            },
+            {
+                $lookup:{
+                    from: "courses",
+                    localField: "basket.course.courseID",
+                    foreignField: "_id",
+                    as: "courseDetail"
+                },
+            },
+            {
+                $addFields:{
+                    "productDetail":{
+                        $function:{
+                            body: function(productDetail , products){
+                                return productDetail.map(function(product){
+                                    const count = products.find(item =>  item.productID.valueOf() == product._id.valueOf()).count;
+                                    const totalPrice = products.find(item=> item.productID.valueOf() == product._id.valueOf()).count * product.price
+                                    return{
+                                        ...product,
+                                        basketCount: count,
+                                        totalPrice,
+                                        finalPrice: totalPrice - ((product.discount/100) * totalPrice) 
+                                    }
+                                })         
+                            },
+                            args: ["$productDetail" , "$basket.product"],
+                            lang: "js"
+                        }
+                    }
+                }
+            },
+            {
+                $addFields:{
+                    "courseDetail":{
+                        $function:{
+                            body: function(courseDetail , courses){
+                                return courseDetail.map(function(course){
+                                    const count = courses.find(item =>  item.courseID.valueOf() == course._id.valueOf()).count;
+                                    const totalPrice = courses.find(item=> item.courseID.valueOf() == course._id.valueOf()).count * course.price
+                                    return {
+                                        ...course,
+                                        basketCount: count,
+                                        totalPrice,
+                                        finalPrice: totalPrice - ((course.discount/100)*totalPrice)
+                                    }
+                                })
+                            },
+                            args: ["$courseDetail" , "$basket.course"],
+                            lang: "js"
+                        }
+                    }
+                }
+            }
+        ]);
+        return basketDetail
+    }
+}
 
 module.exports ={
     userBookmarkBlogs,
     userBookmarkCourse,
-    userBookmarkProduct
+    userBookmarkProduct,
+    getUserBasket
 }
