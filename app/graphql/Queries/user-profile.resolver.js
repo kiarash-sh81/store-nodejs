@@ -142,9 +142,35 @@ const getUserBasket = {
                             args: ["$courseDetail" , "$basket.course"],
                             lang: "js"
                         }
+                    },
+                    "paymentDetail":{
+                        $function:{
+                            body: function(courseDetail , courses , productDetail , products){
+                                const courseAmount = courseDetail.reduce(function(total , course){
+                                    return total + (course.price - ((course.discount/100) * course.price))
+                                } , 0);
+                                const productAmount = productDetail.reduce(function(total , product){
+                                    const count = products.find(item => item.productID.valueOf() == product._id.valueOf()).count;
+                                    const totalPrice = count * product.price;
+                                    return total + (totalPrice - ((product.discount/100)*totalPrice));
+                                } , 0);
+                                const courseIDs = courseDetail.map(course => course._id.valueOf());
+                                const productIDs = productDetail.map(product => product._id.valueOf());
+                                return{
+                                    courseAmount,
+                                    productAmount,
+                                    paymentAmount : courseAmount + productAmount,
+                                    courseIDs,
+                                    productIDs
+                                }
+                                
+                            },
+                            args: ["$courseDetail" , "$basket.course" , "$productDetail" , "$basket.product"],
+                            lang: "js"
+                        }
                     }
                 }
-            }
+            },{$project: {basket: 0}}
         ]);
         return basketDetail
     }
