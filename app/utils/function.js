@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const createError = require('http-errors');
 const redisClient = require("./redisInit");
+const moment = require('moment-jalali');
 
 function randomNumberGenerator(){
     return (Math.floor(Math.random()*90000)+10000)
@@ -34,7 +35,7 @@ function SignRefreshToken(userId){
         const options = {
             expiresIn: "365d"
         }
-        JWT.sign(payload , secretKey , options , async(err , token)=>{
+        JWT.sign(payload , secretKey , options   , async(err , token)=>{
             if(err) reject(createError.InternalServerError("internal server error"));
             const date = (365*24*60*60);
             await redisClient.SETEX(userId ,date ,token);
@@ -147,6 +148,10 @@ function getCourseTime(chapters){
     return total
 }
 
+function generateInvoiceNumber(){
+    return  moment().format("jYYYYjMMjDDHHmmssSSS") + String(process.hrtime()[1]).padStart(9,0);
+}
+
 module.exports ={
     randomNumberGenerator,
     SignAccessToken,
@@ -158,5 +163,6 @@ module.exports ={
     setFeatures,
     deleteInvalidData,
     getTime,
-    getCourseTime
+    getCourseTime,
+    generateInvoiceNumber
 }

@@ -30,6 +30,7 @@ const Userschema = new Schema({
     birthDay: {type: String},
     Role: {type: String , default: "USER"},
     courses:{type: [mongoose.Types.ObjectId] , ref: "course" , default: []},
+    products:{type: [mongoose.Types.ObjectId] , ref: "product" , default: []},
     basket:{type: BasketSchema , default: {}}
 },{timestamps: true,toJSON:{virtuals: true}});
 Userschema.index({phone: "text" ,first_name: "text" , last_name: "text" , username: "text" , email: "text"});

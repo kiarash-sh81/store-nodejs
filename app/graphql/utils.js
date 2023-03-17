@@ -3,6 +3,7 @@ const createHttpError = require("http-errors");
 const { BlogMoldle } = require("../models/blogs");
 const { CoursesModel } = require("../models/course");
 const { ProductsMoldle } = require("../models/products");
+const { UserMoldle } = require("../models/users");
 
 
 function parseObject(valueNode) {
@@ -66,6 +67,111 @@ async function CheckExistProduct(id){
     return product;
 }
 
+async function getUserBasket(userID){
+    const basketDetail = await UserMoldle.aggregate([
+        {
+            $match: {
+                _id : userID
+            },
+        },
+        {
+            $project:{
+                basket:1
+            },
+
+        },
+        {
+
+            $lookup:{
+                from: "products",
+                localField: "basket.product.productID",
+                foreignField: "_id",
+                as: "productDetail"
+            },
+        },
+        {
+            $lookup:{
+                from: "courses",
+                localField: "basket.course.courseID",
+                foreignField: "_id",
+                as: "courseDetail"
+            },
+        },
+        {
+            $addFields:{
+                "productDetail":{
+                    $function:{
+                        body: function(productDetail , products){
+                            return productDetail.map(function(product){
+                                const count = products.find(item =>  item.productID.valueOf() == product._id.valueOf()).count;
+                                const totalPrice = products.find(item=> item.productID.valueOf() == product._id.valueOf()).count * product.price
+                                return{
+                                    ...product,
+                                    basketCount: count,
+                                    totalPrice,
+                                    finalPrice: totalPrice - ((product.discount/100) * totalPrice) 
+                                }
+                            })         
+                        },
+                        args: ["$productDetail" , "$basket.product"],
+                        lang: "js"
+                    }
+                }
+            }
+        },
+        {
+            $addFields:{
+                "courseDetail":{
+                    $function:{
+                        body: function(courseDetail , courses){
+                            return courseDetail.map(function(course){
+                                const count = courses.find(item =>  item.courseID.valueOf() == course._id.valueOf()).count;
+                                const totalPrice = courses.find(item=> item.courseID.valueOf() == course._id.valueOf()).count * course.price
+                                return {
+                                    ...course,
+                                    basketCount: count,
+                                    totalPrice,
+                                    finalPrice: totalPrice - ((course.discount/100)*totalPrice)
+                                }
+                            })
+                        },
+                        args: ["$courseDetail" , "$basket.course"],
+                        lang: "js"
+                    }
+                },
+                "paymentDetail":{
+                    $function:{
+                        body: function(courseDetail , courses , productDetail , products){
+                            const courseAmount = courseDetail.reduce(function(total , course){
+                                return total + (course.price - ((course.discount/100) * course.price))
+                            } , 0);
+                            const productAmount = productDetail.reduce(function(total , product){
+                                const count = products.find(item => item.productID.valueOf() == product._id.valueOf()).count;
+                                const totalPrice = count * product.price;
+                                return total + (totalPrice - ((product.discount/100)*totalPrice));
+                            } , 0);
+                            const courseIDs = courseDetail.map(course => course._id.valueOf());
+                            const productIDs = productDetail.map(product => product._id.valueOf());
+                            return{
+                                courseAmount,
+                                productAmount,
+                                paymentAmount : courseAmount + productAmount,
+                                courseIDs,
+                                productIDs
+                            }
+                            
+                        },
+                        args: ["$courseDetail" , "$basket.course" , "$productDetail" , "$basket.product"],
+                        lang: "js"
+                    }
+                }
+            }
+        },{$project: {basket: 0}}
+    ]);
+
+    return basketDetail;
+}
+
 module.exports ={
     parseValueNode,
     parseLiteral,
@@ -73,5 +179,6 @@ module.exports ={
     toObject,
     CheckExistBlog,
     CheckExistCourse,
-    CheckExistProduct
+    CheckExistProduct,
+    getUserBasket
 }

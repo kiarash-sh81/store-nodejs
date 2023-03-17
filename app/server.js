@@ -6,7 +6,8 @@ const cors = require('cors');
 const createError = require('http-errors');
 const swaggerUI = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
-// require('dotenv').config();
+require('dotenv').config();
+const expressEjsLayout = require('express-ejs-layouts');
 const { AllRoutes } = require('./router/router');
 module.exports = class Application{
     #port;
@@ -16,6 +17,7 @@ module.exports = class Application{
         this.#port = port;
         this.#DB_URI = DB_URI;
         this.configApplication();
+        this.intTemplateEngin();
         this.connectToDatabase();
         this.redisInit();
         this.createServer();
@@ -81,6 +83,14 @@ module.exports = class Application{
     }
     redisInit(){
         require('./utils/redisInit');
+    }
+    intTemplateEngin(){
+        this.#app.use(expressEjsLayout);
+        this.#app.set("view engine" , "ejs");
+        this.#app.set("views" , "resource/views");
+        this.#app.set("layout extractStyles" , true);
+        this.#app.set("layout extractScripts" , true);
+        this.#app.set("layout" , "./layouts/master")
     }
     createServer(){
         const http = require('http');
