@@ -21,6 +21,7 @@ const Userschema = new Schema({
     phone: {type: String  , required: true},
     email: {type: String, lowercase: true},
     password: {type: String},
+    token:{type: String , default: ""},
     otp: {type: Object , default: {
         code: 0,
         expiresIn : 0

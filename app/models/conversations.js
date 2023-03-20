@@ -3,7 +3,7 @@ const {Schema , model, default: mongoose} = require('mongoose');
 const messageSchema = new Schema({
     sender: {type: mongoose.Types.ObjectId , ref: "user"},
     message: {type: String},
-    dateTime: {type: String}
+    dateTime: {type: Number}
 });
 
 const roomSchema = new Schema({
@@ -22,3 +22,5 @@ const conversationSchema = new Schema({
 module.exports ={
     ConversationModel : model("conversation" , conversationSchema)
 }
+
+

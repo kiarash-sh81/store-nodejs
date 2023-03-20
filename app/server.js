@@ -9,6 +9,12 @@ const swaggerJsDoc = require('swagger-jsdoc');
 require('dotenv').config();
 const expressEjsLayout = require('express-ejs-layouts');
 const { AllRoutes } = require('./router/router');
+const { initialSocket } = require('./utils/initializeSocket');
+const { socketHandler } = require('./socket.io');
+const cookieParser  = require('cookie-parser');
+const session = require('express-session');
+const { clientHelper } = require('./utils/client');
+const { cookie_secret_key } = require('./utils/constans');
 module.exports = class Application{
     #port;
     #DB_URI;
@@ -17,6 +23,7 @@ module.exports = class Application{
         this.#port = port;
         this.#DB_URI = DB_URI;
         this.configApplication();
+        this.initSession();
         this.intTemplateEngin();
         this.connectToDatabase();
         this.redisInit();
@@ -44,7 +51,7 @@ module.exports = class Application{
                 },
                 servers:[
                     {
-                        url: "http://localhost:3000"
+                        url: "http://localhost:4000"
                     }
                 ],
                 components:{
@@ -94,12 +101,30 @@ module.exports = class Application{
     }
     createServer(){
         const http = require('http');
-        http.createServer(this.#app).listen(this.#port , ()=>{
+        const server =http.createServer(this.#app)
+        const io = initialSocket(server);
+        socketHandler(io);
+        server.listen(this.#port , ()=>{
             console.log(`run > http://localhost:`+ this.#port);
         });
     }
     createRoutes(){
         this.#app.use(AllRoutes);
+    }
+    initSession(){
+        this.#app.use(cookieParser(cookie_secret_key));
+        this.#app.use(session({
+            secret: cookie_secret_key,
+            resave: true,
+            saveUninitialized: true,
+            cookie:{
+                secure: true
+            }
+        }))
+        this.#app.use((req, res, next)=>{
+            this.#app.locals = clientHelper(req, res);
+            next();
+        })
     }
     errorHanddler(){
         this.#app.use((req , res , next)=>{

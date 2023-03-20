@@ -56,6 +56,7 @@ class Payment extends controller{
         try {
             const {Authority: authority , Status} = req.query;
             const payment = await PaymentMoldle.findOne({authority});
+            console.log(payment.user);
             if(!payment) throw createHttpError.NotFound("تراکنش در انتظار پرداخت یافت نشد");
             if(payment.verify) throw createHttpError.BadRequest("این تراکنش قبلا پرداخت شده است");
             const zarinpal_verify_url = "https://api.zarinpal.com/pg/v4/payment/verify.json";

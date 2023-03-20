@@ -7,6 +7,7 @@ class NameSpaceController extends controller{
     async addNameSpace(req, res, next){
         try {
             const {title , endpoint} = req.body;
+            await findNameSpaceWith(endpoint);
             const createNameSpace = await ConversationModel.create({title , endpoint});
             if(!createNameSpace) throw createHttpError.InternalServerError("cant create name space");
             return res.status(StatusCodes.CREATED).json({
@@ -33,6 +34,10 @@ class NameSpaceController extends controller{
             next(error)
         }
     }
+}
+async function findNameSpaceWith(endpoint){
+    const conversations = await ConversationModel.findOne({endpoint});
+    if(conversations) throw  createHttpError.BadRequest("this name has been already used");
 }
 
 module.exports ={
