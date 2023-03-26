@@ -48,6 +48,8 @@ function getRoomInfo( endpoint, room){
         document.querySelector(".messages ul").innerHTML = ""
         document.querySelector("#roomName h3").innerText = roomInfo.description;
         const messages = roomInfo.messages;
+        const locations = roomInfo.location;
+        const data = [...messages , ...locations].sort((conv1 , conv2)=> conv1.dateTime - conv2.dateTime)
         const userID =document.getElementById("userID").value;
         for (const message of messages) {
             const li = stringToHtml(`<li class="${(userID == message.sender? "sent" : "replies")}"

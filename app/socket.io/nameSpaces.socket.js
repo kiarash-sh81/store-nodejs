@@ -1,5 +1,6 @@
 const { ConversationModel } = require("../models/conversations");
-
+const path = require('path');
+const fs = require('fs');
 class NameSpaceHandler{
     #io;
     constructor(io){
@@ -29,6 +30,8 @@ class NameSpaceHandler{
                     const roomInfo = conversation.rooms.find(item => item.name == roomName);
                     socket.emit("roomInfo" , roomInfo);
                     this.getNewMessage(socket)
+                    this.getNewLocation(socket);
+                    this.uploadFile(socket);
                     socket.on("disconnect" , async ()=>{
                     await this.getOnlineUser(conversation.endpoint ,roomName);
                     })
@@ -55,6 +58,30 @@ class NameSpaceHandler{
                 }
             })
             this.#io.of(`/${endpoint}`).in(roomName).emit("confirmMessage" , data);
+        })
+    }
+    async getNewLocation(socket){
+        socket.on("newLocation" ,async data=>{
+            const {location , endpoint , roomName , sender} = data;
+            await ConversationModel.updateOne({endpoint , "rooms.name": roomName} , {
+                $push:{
+                    "rooms.$.location": {
+                        sender,
+                        location,
+                        dateTime: Date.now()
+                    }
+                }
+            })
+            this.#io.of(`/${endpoint}`).in(roomName).emit("confirmLocation" , data);
+        })
+    }
+
+    uploadFile(socket){
+        socket.on("upload", ({file , filename} , callback)=>{
+            const ext = path.extname(filename);
+            fs.writeFile("public/uploads/sockets/" + String(Date.now() + ext) , file , (err)=>{
+                callback({message: err? "failur" : "success"})
+            })
         })
     }
 }

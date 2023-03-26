@@ -2,7 +2,13 @@ const {Schema , model, default: mongoose} = require('mongoose');
 
 const messageSchema = new Schema({
     sender: {type: mongoose.Types.ObjectId , ref: "user"},
-    message: {type: String},
+    message: {type: String , default:""},
+    dateTime: {type: Number}
+});
+
+const locationSchema = new Schema({
+    sender: {type: mongoose.Types.ObjectId , ref: "user"},
+    location: {type: Object , default:{}},
     dateTime: {type: Number}
 });
 
@@ -11,6 +17,7 @@ const roomSchema = new Schema({
     description: {type: String},
     image: {type: String},
     messages: {type: [messageSchema] , default: []},
+    location: {type: [locationSchema] , default: []},
 });
 
 const conversationSchema = new Schema({
